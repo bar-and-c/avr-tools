@@ -1,0 +1,23 @@
+diff --git a/Makefile b/Makefile
+index 1f10c59..7003b24 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+-OS = linux
++OS ?= linux
+ VERSION = 1.4.2
+ 
+ DISTFILES = src \
+diff --git a/src/makefiles/Makefile.osx b/src/makefiles/Makefile.osx
+index aaed69d..298e326 100644
+--- a/src/makefiles/Makefile.osx
++++ b/src/makefiles/Makefile.osx
+@@ -13,5 +13,7 @@ SOURCE=args.c \
+         stdextra.c
+ 
+ all:
+-	$(CC) $(CDEFS) -o avra $(SOURCE)
++	$(CC) $(CDEFS) -o x86_app -target x86_64-apple-macos10.12 $(SOURCE)
++	$(CC) $(CDEFS) -o arm_app -target arm64-apple-macos11 $(SOURCE)
++	lipo -create -output avra x86_app arm_app
+ 
