@@ -10,5 +10,5 @@ That commit was patched to (hopefully!) enable universal macOS build, the patch 
 
 Build command:
 ```
-OS=osx DESTDIR=$HOME/kod/avr-labs/avra_macos make install
+OS=osx DESTDIR=$HOME/kod/avr-tools/avra_macos make install
 ```

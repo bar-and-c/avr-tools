@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "AVR Debug (simavr)",
+            "type": "cppdbg",
+            "request": "launch",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/opt/homebrew/bin/avr-gdb",
+            "miDebuggerServerAddress": "localhost:1234",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build_output/${workspaceFolderBasename}.elf",
+            "externalConsole": false,
+            "setupCommands": [
+                { "text": "set architecture avr"
+                },
+                { "text": "break main"
+                }
+            ],
+            "launchCompleteCommand": "exec-continue"
+        }
+    ]
+}

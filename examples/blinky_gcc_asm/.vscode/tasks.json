@@ -1,0 +1,42 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build with make",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "shell": {
+                      "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                      "args": ["-c"]
+                    }
+                }
+            },
+            "command": ". ../../tools/build_setup.sh && MCU=${config:avr.mcu} make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Start simavr (GDB server)",
+            "type": "shell",
+            "command": "simavr",
+            "args": [
+                "-g",
+                "-m",
+                "${config:avr.mcu}",
+                "${workspaceFolder}/build_output/${workspaceFolderBasename}.elf"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,69 @@
+ROOT_DIR ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+ifeq ($(OS),Windows_NT)
+	ARDUINO_DEVICE ?= COM4
+	ARDUINO_PROGRAMMER = wiring
+
+	# Trying to guess where the Atmel_DFP pack is
+	ATMEL_PACK_ROOT ?= C:/7.0
+	DFP_BASE := $(ATMEL_PACK_ROOT)/packs/atmel/ATmega_DFP
+	DFP_VERSIONS := $(wildcard $(DFP_BASE)/*)
+	DFP_DIR := $(lastword $(sort $(DFP_VERSIONS)))
+	ifneq ($(DFP_DIR),)
+		AVR_DEVICE_INC ?= $(DFP_DIR)/avrasm/inc
+	else
+		AVR_DEVICE_INC := "ATmega_DFP_dir_not_found__see_readme_files"
+	endif
+
+	CC = avr-gcc
+	OBJCOPY = avr-objcopy
+	AVRA_EXEC = avrasm2.exe
+
+else
+	# For macOS and Linux, assume the tools are in the PATH
+	CC = avr-gcc
+	OBJCOPY = avr-objcopy
+
+	UNAME_S := $(shell uname -s)
+
+	ifeq ($(UNAME_S),Linux)
+		ARDUINO_DEVICE ?= /dev/ttyACM0
+		ARDUINO_PROGRAMMER = wiring
+
+		# All this is to be able to use avrasm2.exe in WSL on Linux.
+		# One could use avra, BUT the latest official version doesn't 
+		# support ATmega32U4.
+		ifeq ($(findstring WSL, $(shell uname -a)), WSL)
+			AVRA_EXEC = avrasm2.exe
+
+			ATMEL_PACK_ROOT ?= /mnt/c/7.0
+			DFP_BASE := $(ATMEL_PACK_ROOT)/packs/atmel/ATmega_DFP
+			DFP_VERSIONS := $(wildcard $(DFP_BASE)/*)
+			DFP_DIR := $(lastword $(sort $(DFP_VERSIONS)))
+			ifneq ($(DFP_DIR),)
+				AVRASM2_FRIENDLY_DFP_DIR = $(subst /mnt/c, C:, $(DFP_DIR))
+				AVR_DEVICE_INC ?= $(AVRASM2_FRIENDLY_DFP_DIR)/avrasm/inc
+			else
+				AVR_DEVICE_INC := "ATmega_DFP_dir_not_found__see_readme_files"
+			endif
+
+		else
+			AVRA_EXEC = avra
+		endif
+	endif
+
+	ifeq ($(UNAME_S),Darwin)
+		ARDUINO_DEVICE ?= $(shell $(ROOT_DIR)../tools/scan_arduino.sh)
+		ARDUINO_PROGRAMMER = avr109
+		AVRA_EXEC = $(ROOT_DIR)../avra_macos/usr/local/bin/avra
+	endif
+
+
+endif
+
+
+upload: $(HEXFILE)
+	@echo 'Will upload "$(HEXFILE)" to "$(ARDUINO_DEVICE)"...'
+	@# -D disables auto-erase
+	avrdude -v -p $(MCU) -c $(ARDUINO_PROGRAMMER) -b 115200 -P $(ARDUINO_DEVICE) -D -U flash:w:$<
+	@echo 'Program "$(HEXFILE)" uploaded to "$(ARDUINO_DEVICE)"'
