@@ -124,6 +124,21 @@ sudo apt-get install gcc-avr
 # For simavr, used for debugging
 sudo apt-get install simavr
 ```
+
+###### simavr_wrapper
+
+To keep things simple (for me!), I used `clang` to build `simavr_wrapper`, and 
+`pkg-config` to get compile and link flags, so you will have to either install 
+these as well, or update the `simavr_wrapper` makefile. On Ubuntu, I think 
+`pkg-config` is available by default, and on macOS `clang` is available as part
+of the Xcode installation.
+
+```
+sudo apt-get install libsimavr-dev
+sudo apt-get install libelf-dev
+sudo apt-get install clang
+```
+
 ##### Add tools to PATH
 This is where it starts to get funky. The makefiles assumes that the tools are available on the PATH.
 If installed with homebrew on macOS, or using some other packet manager on Linux, that is pretty likely.
@@ -234,11 +249,60 @@ commands in the terminal at the bottom, prefixed with `-exec`.
 Debugging like this works for both assembly and C code, but only if built by avr-gcc.
 
 
-## Running in SimulIDE
-For a richer simulation environment, you can use SimulIDE. Unfortunately, ATmega32U4 is not available there
-(yet). What you can do instead is to build for ATmega32, but note that not all ports are the same as on 
-ATmega32U4. What you can do for those ports is to define a symbolic name for the port/pin, that you use
-in the code, and define them differently depending on MCU.
+## Running in a simulated MCU
+
+There are a few options to run AVR code in a simulated environment, on your computer.
+
+Here is an overview, there is [much more on this subject here](simavr_wrapper/README.md).
+
+### simavr
+The tool simavr, which is used for executing the firmware code when debugging, can also be used to
+run the code freely, without a debugger attached. The problem is that by default, it just runs the
+code, with no visible output. It is possible to add traces on port pins, IRQs, et cetera,
+with the `--add-trace` option, and then get this saved as a `.vcd` file to be viewed in an 
+external waveform viewer.
+
+This command sets a trace on PORTC, pin 7. The simulation is stopped with `Ctrl-C` in the terminal, and then the output VCD file
+is created.
+
+```
+simavr -v -m atmega32u4 -f 16000000 \
+       --add-trace C7=portpin@0x7/0x43 \
+       -o output.vcd build_output/blinky_asm.hex
+Adding portpin trace on address 0x0007, mask 0x43 ('C7')
+```
+
+One can observe other registers as well, not just GPIO pins. 
+
+
+### simavr_wrapper
+
+The tool simavr is useful in the sense that it is readily available, but not very user friendly.
+
+I have tried to make something slightly easier to use, called `simavr_wrapper`.
+
+It is not very pretty, the best thing about it is that it displays the status of all ports in the 
+terminal, live. The immediate feedback of what is happening is one of the benefits, another is 
+that it is possible to pass input to it, to toggle port pins.
+
+
+### Viewing VCD files
+The VCD files produced by simavr can be viewed using several tools. One that often is mentioned is GTKWave.
+I have used an extension to VS Code called [Vaporview](https://github.com/Lramseyer/vaporview). It looks 
+like the screen of an oscilloscope or a logic analyzer.
+
+![An image showing a VCD file in Vaporview](simavr_wrapper/vcd_trace_overview.png "VCD trace in Vaporview")
+
+
+### Running in SimulIDE
+For a richer simulation environment, you can use [SimulIDE](https://simulide.com/p/). This is a standalone 
+applicaton for all major operating systems that can simulate not only many AVR MCUs and some Arduino boards, 
+but also things like digital circuits, passive and active analog components, power sources, measurement tools, 
+and even peripherals like LCD displays.
+
+Unfortunately, ATmega32U4 is not available there (yet). What you can do instead is to build for ATmega32, but
+note that not all ports are the same as on ATmega32U4. What you can do for those ports is to define a symbolic
+name for the port/pin, that you use in the code, and define them differently depending on MCU.
 
 In pure AVR assembly language:
 ```
