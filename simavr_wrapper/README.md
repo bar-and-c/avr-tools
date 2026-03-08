@@ -211,8 +211,8 @@ counter goes outside the array bounds.
 After adding eight `-ti` arguments, the ninth such argument will – since this is C – be stored 
 as if there was no size limit in the array, thus overwriting whatever comes after it on the stack.
 
-This is what is known as "stack overflow" – it is bad and can cause real harm. There is a very 
-interesting paper written on this subject called [Smashing The Stack For Fun And Profit]
+This is what is known as "stack buffer overflow" – it is bad and can cause real harm. There is 
+a very interesting paper written on this subject called [Smashing The Stack For Fun And Profit]
 (https://inst.eecs.berkeley.edu/~cs161/fa08/papers/stack_smashing.pdf) – it is a good read not
 only because it it gives an insight in how C works (you can get a real sense of how dangerous C
 can be, and why you have to be careful), but it is also fun. 
@@ -220,6 +220,15 @@ can be, and why you have to be careful), but it is also fun.
 I have tried passing more than eight `-ti` arguments, and yes, it behaves oddly. If you read the 
 paper, you already know that exactly _how_ it behaves, in what particular odd way, depends on 
 what arguments you pass. 
+
+The error log made me suspect that the overwritten variable contained the MCU name, and yes, by
+passing eight `-ti` arguments, I let the ninth be 72, which is a readable ASCII code:
+
+```
+simavr -m atmega32u4 -f 16000000 -ti 29 -ti 2 -ti 3 -ti 4 -ti 5 -ti 6 -ti 7 -ti 8 -ti 72 lab6.elf            
+avr_make_mcu_by_name: AVR 'H' not known
+simavr: AVR 'H' not known
+```
 
 
 ## simavr_wrapper

@@ -11,7 +11,8 @@ the assembly language avr-gcc uses differs somewhat from standard AVR assembler,
 
 
 ## Getting started
-Read this to get up and running quickly. 
+Read this to get up and running quickly. The bottom line is that some tools are needed, and they 
+need to be in the PATH environment variable for the makefiles (the build system) to work. 
 
 
 ### Downloading all this
@@ -27,7 +28,7 @@ A few example code projects can be found in the `examples` directory. These are 
 ### Two project types
 
 Two types of projects are supported, pure AVR assembler code and mixed C/assembler. In the latter, 
-avr-gcc is used; avr-gcc can be used for assembler projects as well, but the assembly language differs 
+`avr-gcc` is used; `avr-gcc` can be used for assembler projects as well, but the assembly language differs 
 somewhat from the pure AVR assembler. For pure AVR assembly language, either `avra` or `avrasm2.exe` 
 is used as assembler.
 
@@ -87,31 +88,53 @@ accept C/C++ style comments, use `;` instead (that works in both environments).
 
 
 #### Windows
-Not much work has been done to make it work on Windows. It does not work in `cmd.exe`, but some parts work 
-in a Git Bash shell, and a lot works in WSL ("Linux on Windows").
 
-At the time of writing it is assumed that Microchip Studio and an ATmega_DFP pack is installed. These tools
-(like avrasm2, avr-gcc and make) can be installed separately, but for now, this is assumed. 
+On Windows, life is slightly more complicated, but the same problem needs to be solved – getting
+the tools and putting them in the PATH variable. A Windows native environment (such as cmd.exe 
+or PowerShell) does things differently, and currently doesn't work with the makefiles, they need
+a "Unix-like" environment. On Windows, two such alternatives I have tried are Git Bash and [WSL]
+(https://learn.microsoft.com/en-us/windows/wsl/). 
 
-The makefile os.mak tries to guess where the AVR assembler include files are. If it fails, find them, and 
-either update os.mak or define it on command line, like this: 
+The makefile os.mak tries to guess where the AVR assembler device include files are. If it 
+fails, find where they are, and either update os.mak or define it on command line, like this: 
 ```
 AVR_DEVICE_INC=/c/7.0/packs/atmel/ATmega_DFP/1.7.374/avrasm/inc make
 ```
 
-##### To run on Windows in WSL
+##### Git Bash
+Git Bash seems to be easier to "cross over" to native Windows, but I do not know 
+if/how one installs software there – one option I have tried in Git Bash is using 
+Microchip Studio's AVR assembler and C compiler, as well as its `shellutils` directory
+for tools like `make` etc. 
 
-My initial attempts were in Git Bash, using Microchip tools. That worked OK.
-Now I wanted to bring in `simavr_wrapper`, and got more complicated. 
-It is not trivial to install things in Git Bash (AFAIK), so I opted for WSL.
+If Microchip Studio is installed, and there is a setup script (in `tools/`) that can 
+be _sourced_ to set those paths in Git Bash:
+```
+. tools/build_setup.sh
+```
+Note the leading period, followed by a whitespace – that means that the script is executed 
+in the terminal's process, and the PATH updates are available. 
+
+If these paths are not correct on your computer, either update the setup script to your 
+paths, or update your environment PATH variable to include them.
+
+- The `shellutils` path is needed for `make`. 
+- The `avrassembler` path is needed for the AVR assembler (`avrasm2`). 
+- The `avr8-gnu-toolchain` path is needed for the `avr-gcc` tools. 
+
+
+##### WSL
+
+WSL is Linux, more or less, so it is easy to install the needed packages. 
+
+My initial attempts were in Git Bash, using Microchip tools. That worked OK, but
+it is not trivial to install things in Git Bash (AFAIK), so I opted for WSL.
 
 It ought to be possible to use the stuff from Microchip in WSL, but I found it 
 problematic with some paths, so I installed most using `apt-get`. The `avra`
 assembler is available for Linux as well, but it (as for macOS) does not support 
-the ATmega32U4 MCU used in Arduino Leonardo. 
-
-At the time of writing, the assembler in the Microchip Studio toolchain is used,
-with some ugly workarounds in `os.mak`.
+the ATmega32U4 MCU used in Arduino Leonardo. Instead, I have used the assembler 
+in the Microchip Studio toolchain, with some ugly workarounds in `os.mak`.
 
 ```
 sudo apt-get update 
@@ -119,6 +142,7 @@ sudo apt-get update
 # For make and other build tools
 sudo apt install build-essential
 
+# For avr-gcc
 sudo apt-get install gcc-avr
 
 # For simavr, used for debugging
@@ -138,27 +162,6 @@ sudo apt-get install libsimavr-dev
 sudo apt-get install libelf-dev
 sudo apt-get install clang
 ```
-
-##### Add tools to PATH
-This is where it starts to get funky. The makefiles assumes that the tools are available on the PATH.
-If installed with homebrew on macOS, or using some other packet manager on Linux, that is pretty likely.
-
-On Windows, though, Microchip Studio is assumed to be installed, and there is a setup script (in `tools/`)
-that can be _sourced_ to set those paths in Git Bash:
-```
-. tools/build_setup.sh
-```
-Note the leading period, followed by a whitespace – that means that the script is not executed in its own
-process – if it had been, the PATH updates would have been lost when exiting the script process.
-
-If these paths are not correct on your computer, either update the setup script to your paths, or update 
-your environment PATH variable to include them.
-
-- The `shellutils` path is needed for `make`. 
-- The `avrassembler` path is needed for the AVR assembler (`avrasm2`). 
-- The `avr8-gnu-toolchain` path is needed for the `avr-gcc` tools. 
-
-
 
 
 ### Building the AVR code
