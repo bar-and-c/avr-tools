@@ -4,8 +4,8 @@ CCFLAGS += $(shell pkg-config -cflags libelf)
 LDFLAGS += $(shell pkg-config -libs simavr)
 LDFLAGS += $(shell pkg-config -libs libelf)
 
-simavr_wrapper: simavr_wrapper.c Makefile
-	clang $(CCFLAGS) -g $(LDFLAGS) simavr_wrapper.c -o simavr_wrapper
+simsim: simsim.c Makefile
+	clang $(CCFLAGS) -g $(LDFLAGS) simsim.c -o simsim
 
 clean:
-	rm -rf simavr_wrapper simavr_wrapper.dSYM
+	rm -rf simsim simsim.dSYM

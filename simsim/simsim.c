@@ -209,15 +209,15 @@ static void present_changes(void) {
     }
 }
 
-static void simavr_wrapper_stop(void) {
+static void simsim_stop(void) {
     running = false;
 }
 
-static void simavr_wrapper_speed_change(void) {
+static void simsim_speed_change(void) {
     run_slowly = !run_slowly;
 }
 
-static void simavr_wrapper_pin_toggle(char port, unsigned int pin) {
+static void simsim_pin_toggle(char port, unsigned int pin) {
     enum port_group port_in;
     struct gpio_info *gpio;
 
@@ -257,7 +257,7 @@ static void simavr_wrapper_pin_toggle(char port, unsigned int pin) {
 }
 
 static void signal_handler(int dummy) {
-    simavr_wrapper_stop();
+    simsim_stop();
 }
 
 static void *kbd_input_thread(void *param) {
@@ -267,18 +267,18 @@ static void *kbd_input_thread(void *param) {
         if (((c >= 'A') && (c <= 'F')) || ((c >= 'a') && (c <= 'f'))) {
             pending_gpio_port = c;
         } else if (((c >= '0') && (c <= '7')) && (pending_gpio_port != 0)) {
-            simavr_wrapper_pin_toggle(pending_gpio_port, c - '0');
+            simsim_pin_toggle(pending_gpio_port, c - '0');
             pending_gpio_port = 0;
         } else {
 
             switch (c) {
             case EOF:
             case 'q':
-                simavr_wrapper_stop();
+                simsim_stop();
                 break;
             case 's':
                 pending_gpio_port = 0;
-                simavr_wrapper_speed_change();
+                simsim_speed_change();
                 break;
             case '\n':
                 continue;

@@ -15,8 +15,9 @@ In short:
 - `simavr` is an existing tool to be used out-of-the-box, with any AVR firmware, but 
 it doesn't provide that much of instant feedback – it is possible to create a trace file to
 be viewed afterwards
-- `simavr_wrapper` is a custom built application on top of the `simavr` library; the main thing
-it provides is a way to see immediately what is happening on ports (it also creates a trace file). 
+- `simsim` is a custom built application on top of the `simavr` library; the main thing
+it provides is a way to see immediately what is happening on ports (it also automatically 
+creates a trace file). 
 
 Let us dig deeper.
 
@@ -231,7 +232,7 @@ simavr: AVR 'H' not known
 ```
 
 
-## simavr_wrapper
+## `simsim`
 
 This is a custom built simulator, built on the library that is shipped with `simavr`.
 You will have to build it yourself – at the moment `clang` and `pkg-config` are needed for

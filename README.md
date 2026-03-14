@@ -149,11 +149,11 @@ sudo apt-get install gcc-avr
 sudo apt-get install simavr
 ```
 
-###### simavr_wrapper
+###### `simsim`
 
-To keep things simple (for me!), I used `clang` to build `simavr_wrapper`, and 
+To keep things simple (for me!), I used `clang` to build teh AVR simulator `simsim`, and 
 `pkg-config` to get compile and link flags, so you will have to either install 
-these as well, or update the `simavr_wrapper` makefile. On Ubuntu, I think 
+these as well, or update the `simsim` makefile. On Ubuntu, I think 
 `pkg-config` is available by default, and on macOS `clang` is available as part
 of the Xcode installation.
 
@@ -256,7 +256,7 @@ Debugging like this works for both assembly and C code, but only if built by avr
 
 There are a few options to run AVR code in a simulated environment, on your computer.
 
-Here is an overview, there is [much more on this subject here](simavr_wrapper/README.md).
+Here is an overview, there is [much more on this subject here](simsim/README.md).
 
 ### simavr
 The tool simavr, which is used for executing the firmware code when debugging, can also be used to
@@ -278,11 +278,12 @@ Adding portpin trace on address 0x0007, mask 0x43 ('C7')
 One can observe other registers as well, not just GPIO pins. 
 
 
-### simavr_wrapper
+### Simple AVR simulator
 
-The tool simavr is useful in the sense that it is readily available, but not very user friendly.
+The tool `simavr` is useful in the sense that it is readily available, but not very user friendly.
 
-I have tried to make something slightly easier to use, called `simavr_wrapper`.
+I have tried to make something intended to be slightly easier to use, called `simsim` ("**sim**ple
+**sim**ulator").
 
 It is not very pretty, the best thing about it is that it displays the status of all ports in the 
 terminal, live. The immediate feedback of what is happening is one of the benefits, another is 
@@ -294,7 +295,7 @@ The VCD files produced by simavr can be viewed using several tools. One that oft
 I have used an extension to VS Code called [Vaporview](https://github.com/Lramseyer/vaporview). It looks 
 like the screen of an oscilloscope or a logic analyzer.
 
-![An image showing a VCD file in Vaporview](simavr_wrapper/vcd_trace_overview.png "VCD trace in Vaporview")
+![An image showing a VCD file in Vaporview](simsim/vcd_trace_overview.png "VCD trace in Vaporview")
 
 
 ### Running in SimulIDE
