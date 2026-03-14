@@ -66,4 +66,8 @@ $(HEXFILE): $(MAIN_WITH_DEVICE_INCLUDE) $(INCLUDE_SRC)
 clean:
 	rm -rf $(BUILD_DIR)
 
+
+simsim: simavr
+	$(ROOT_DIR)/../simsim/simsim $(HEXFILE)
+
 .PHONY: all upload clean

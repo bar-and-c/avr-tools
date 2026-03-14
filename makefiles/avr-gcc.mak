@@ -59,4 +59,7 @@ simavr: CFLAGS += -D_SIMAVR_BUILD_ $(shell pkg-config -cflags simavr)
 simavr: $(ELFFILE)
 	@echo "simavr build"
 
+simsim: simavr
+	$(ROOT_DIR)/../simsim/simsim $(ELFFILE)
+
 .PHONY: all clean debug
