@@ -11,21 +11,16 @@ the assembly language avr-gcc uses differs somewhat from standard AVR assembler,
 
 
 ## Getting started
-Read this to get up and running quickly. The bottom line is that some tools are needed, and they 
-need to be in the PATH environment variable for the makefiles (the build system) to work. 
+Read [the getting started guide](getting_started.md) to get up and running quickly. The bottom
+line is that some tools are needed, and they need to be in the PATH environment variable for
+the makefiles (the build system) to work. 
 
 
-### Downloading all this
-To get these files to your computer, you can either download it as a zip file, or -- if you know (or 
-would like to learn) `git` -- you can clone this repository.
-
-Both options are available from the big green button labelled **Code** on the top of this page.
-
-### Example code
+## Example code
 A few example code projects can be found in the `examples` directory. These are documented 
 [here](examples/README.md)
 
-### Two project types
+## Two project types
 
 Two types of projects are supported, pure AVR assembler code and mixed C/assembler. In the latter, 
 `avr-gcc` is used; `avr-gcc` can be used for assembler projects as well, but the assembly language differs 
@@ -35,7 +30,7 @@ is used as assembler.
 [Check out the makefiles for more info](makefiles/README.md).
 
 
-### Adding your own code
+## Adding your own code
 There are some hackish assumptions made here, to keep things simple. Some features (e.g. the VSCode
 sourcing the setup script) rely on the source code being two directories down from here, i.e. like 
 in the examples directory.
@@ -53,11 +48,11 @@ for instance:
              cs_lab2/
 ```
 
-### Toolchain
+## Toolchain
 
-#### macOS
+### macOS
 
-##### Prerequisites
+#### Prerequisites
 
 1. Install Xcode from App Store.
 2. Install xcode command line tools by running this in the terminal: <br>
@@ -66,7 +61,7 @@ for instance:
 downloading an installer from https://github.com/Homebrew/brew/releases/latest; at the time of 
 writing it is called Homebrew-5.0.3.pkg. After download, double-click and do the installation.
 
-##### Installing the tools
+#### Installing the tools
 
 1. Install avr-gcc by running these commands in the terminal <br>
 `brew tap osx-cross/avr` <br>
@@ -87,12 +82,12 @@ One big difference between `avra` and the AVR assembler used in Microchip Studio
 accept C/C++ style comments, use `;` instead (that works in both environments).
 
 
-#### Windows
+### Windows
 
 On Windows, life is slightly more complicated, but the same problem needs to be solved – getting
 the tools and putting them in the PATH variable. A Windows native environment (such as cmd.exe 
-or PowerShell) does things differently, and currently doesn't work with the makefiles, they need
-a "Unix-like" environment. On Windows, two such alternatives I have tried are Git Bash and [WSL]
+or PowerShell) does things differently, and currently doesn't work with the makefiles – a "Unix-like" 
+environment is needed. On Windows, two such alternatives I have tried are Git Bash and [WSL]
 (https://learn.microsoft.com/en-us/windows/wsl/). 
 
 The makefile os.mak tries to guess where the AVR assembler device include files are. If it 
@@ -101,11 +96,10 @@ fails, find where they are, and either update os.mak or define it on command lin
 AVR_DEVICE_INC=/c/7.0/packs/atmel/ATmega_DFP/1.7.374/avrasm/inc make
 ```
 
-##### Git Bash
-Git Bash seems to be easier to "cross over" to native Windows, but I do not know 
-if/how one installs software there – one option I have tried in Git Bash is using 
+#### Git Bash
+Git Bash seems to be easier to "cross over" to native Windows, so then you can use 
 Microchip Studio's AVR assembler and C compiler, as well as its `shellutils` directory
-for tools like `make` etc. 
+for tools like `make` etc., and Arduino's installation of `avrdude`. 
 
 If Microchip Studio is installed, and there is a setup script (in `tools/`) that can 
 be _sourced_ to set those paths in Git Bash:
@@ -123,19 +117,22 @@ paths, or update your environment PATH variable to include them.
 - The `avr8-gnu-toolchain` path is needed for the `avr-gcc` tools. 
 
 
-##### WSL
+#### WSL
 
 WSL is Linux, more or less, so it is easy to install the needed packages. 
 
-My initial attempts were in Git Bash, using Microchip tools. That worked OK, but
-it is not trivial to install things in Git Bash (AFAIK), so I opted for WSL.
+My initial attempts were in Git Bash, using Microchip tools. That works very well 
+for building and uploading, but the simulation tool that is needed for debugging 
+(`simavr`) is not readily available on Windows. In WSL much or all of this can be
+installed using `apt`, but uploading is probably hard to do from WSL, since you
+need access to the COM port. 
 
-It ought to be possible to use the stuff from Microchip in WSL, but I found it 
-problematic with some paths, so I installed most using `apt-get`. The `avra`
-assembler is available for Linux as well, but it (as for macOS) does not support 
-the ATmega32U4 MCU used in Arduino Leonardo. Instead, I have used the assembler 
-in the Microchip Studio toolchain, with some ugly workarounds in `os.mak`.
+I installed most tools using `apt`. The `avra` assembler is available for Linux as
+well, but (like on macOS) its latest release does not does not support the ATmega32U4
+MCU used in Arduino Leonardo. Instead, I have used the assembler in the Microchip
+Studio toolchain, with some pretty ugly workarounds in `os.mak`.
 
+Installing tools in WSL:
 ```
 sudo apt-get update 
 
@@ -149,13 +146,11 @@ sudo apt-get install gcc-avr
 sudo apt-get install simavr
 ```
 
-###### `simsim`
+##### `simsim`
 
-To keep things simple (for me!), I used `clang` to build teh AVR simulator `simsim`, and 
-`pkg-config` to get compile and link flags, so you will have to either install 
-these as well, or update the `simsim` makefile. On Ubuntu, I think 
-`pkg-config` is available by default, and on macOS `clang` is available as part
-of the Xcode installation.
+To keep things simple (for me!), I used `clang` to build the crude AVR simulator `simsim`,
+and  `pkg-config` to get compile and link flags, so you will have to either install 
+these as well, or update the `simsim` makefile. 
 
 ```
 sudo apt-get install libsimavr-dev
@@ -164,7 +159,7 @@ sudo apt-get install clang
 ```
 
 
-### Building the AVR code
+## Building the AVR code
 The simplest way to build is to go to the main code directory (using `cd` in the terminal) and then enter 
 `make` in the terminal, like this:
 ```
@@ -188,7 +183,7 @@ else ifeq ($(MCU),atmega328p)
 DEVICE_INCLUDE_NAME = m328pdef.inc
 ```
 
-#### Build and upload to Arduino
+### Build and upload to Arduino
 If you want to upload the built firmware to the Arduino, use the make target `upload`. There is an automatic 
 scan for the board, but **note:** this is currently only for macOS, and only with one (1) board connected. 
 If the automatic scan fails, you can add the port by setting the variable `ARDUINO_DEVICE`on the command 
@@ -197,7 +192,7 @@ line, like this:
 ARDUINO_DEVICE=/dev/ttyACM0 make upload
 ```
 
-#### Build and debug
+### Build and debug
 To debug on the Arduino Leonardo boards, you will need other tools, but if building with avr-gcc you can
 debug on the host computer. You will need to install simavr to use as a simulated AVR MCU, and
 `avr-gdb` for debugging (using homebrew on macOS). The makefiles have a target for debugging:
@@ -220,19 +215,19 @@ here is a brief intro:
 
 Pressing the return key repeats the last command.
 
-### Build and debug using Visual Studio Code
+## Build and debug using Visual Studio Code
 To run in VSCode, the code directory must contain a subdirectory called `.vscode` containing settings 
 for VSCode. The example code directories contain such setup that uses the makefiles to build. For code 
 built using avr-gcc, it is also possible to debug in VSCode, with a graphical interface.
 
-#### Open project
+### Open project
 To open a code directory as a VSCode project, simply choose File->Open Folder. The directory must contain a 
 .vscode subdirectory to work properly in VSCode.
 
-#### To build
+### To build
 Use menu selection Terminal->Run Build Task
 
-#### To debug
+### To debug
 Set a breakpoint by opening a source file and click on a line of code _in_the_left_margin_, to the left of 
 the line number. It should result in a red dot.
 
@@ -348,13 +343,18 @@ MCU=atmega32 make clean all
 
 ## Known issues
 
-This has mainly been used and developed on macOS. Most of it ought to work on Linux and in WSL (or 
-maybe Git Bash) on Windows. 
+This has mainly been used and developed on macOS. Most of it ought to work on Linux and in WSL (or
+Git Bash) on Windows. 
 
-- I believe most tools exist natively on Windows, so it ought to be possible to get it to work.
-  There are some things done in the makefiles that assume a Unix type of environment (simply because
+- There are some things done in the makefiles that assume a Unix type of environment (simply because
   I lack the necessary `make` and Windows skills). It should be possible to fix, but I will not do it 
-  anytime soon. I have tried a lot of it in WSL, and it works OK.
+  anytime soon. I have tried a lot of it in WSL, and it works OK. If you only want to build (not debug),
+  Git Bash is even simpler (assuming Microchip Studio and Arduino are installed).
 - On macOS, there is a script that tries to detect the Leonardo in bootloader mode – maybe this is too 
-  optimistic (and error prone) – but on Linux and Windows the device has to be passed on command line, 
-  `ARDUINO_DEVICE=/dev/ttyACM0 make` and `ARDUINO_DEVICE=COM4 make` respectively. Or edit `os.mak`.
+  optimistic (and error prone) – and on Windows there is a much less tested variant, but if that fails,
+  or if on Linux, the device has to be passed on command line, `ARDUINO_DEVICE=/dev/ttyACM0 make` (or
+  whatever the device is, something like `COM7` on Windows). Or edit `os.mak`.
+- The device detection script mentioned above only works if there is one (1) device that matches the
+  crude check. This can be improved, but is not (yet).
+- The device detection script mentioned above also (possibly) only works on Leonardo – other MCUs than
+  ATmega32U4 may need another programmer ("wiring"?).

@@ -13,16 +13,16 @@
 #include <avr_ioport.h>
 
 
-/********* TODO: 
+/* TODO: 
 
-// 1. At the moment, this relies on a home built simavr – the reason is to be able to load 
-//    .hex firmware (for .asm/avra); maybe try to copy that code?
+1. At the moment, this relies on a home built simavr – the reason is to be able to load 
+   .hex firmware (for .asm/avra); maybe try to copy that code?
 2. Make it build for Intel macOS as well.
-// 3. It would be nice to have a better grasp on timing: make sure that the firmware runs 
-//    as fast as on the target (so that its timings are realistic), update the UI in a sane way, 
-//    provide some way to slow down the execution (the current method is a bit weird), ...
-// 4. Figure out a sane command line UI.
-//// LATER, DUDE!  5. Figure out some way to communicate I/O over a socket, for a better UI.
+3. It would be nice to have a better grasp on timing: make sure that the firmware runs 
+   as fast as on the target (so that its timings are realistic), update the UI in a sane way, 
+   provide some way to slow down the execution (the current method is a bit weird), ...
+4. Figure out a sane command line UI.
+5. Maybe figure out some way to communicate I/O over a socket, for a better UI.
 
 ALSO: maybe add 
 a) proper command line options (for e.g. MCU and freq)
