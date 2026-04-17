@@ -148,14 +148,12 @@ sudo apt-get install simavr
 
 ##### `simsim`
 
-To keep things simple (for me!), I used `clang` to build the crude AVR simulator `simsim`,
-and  `pkg-config` to get compile and link flags, so you will have to either install 
-these as well, or update the `simsim` makefile. 
+I used `gcc` to build the crude AVR simulator `simsim`, and `pkg-config` to get compile and link flags.
+It also needs the followinf libs:
 
 ```
 sudo apt-get install libsimavr-dev
 sudo apt-get install libelf-dev
-sudo apt-get install clang
 ```
 
 

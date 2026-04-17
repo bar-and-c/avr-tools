@@ -5,7 +5,7 @@ LDFLAGS += $(shell pkg-config -libs simavr)
 LDFLAGS += $(shell pkg-config -libs libelf)
 
 simsim: simsim.c Makefile
-	clang $(CCFLAGS) -g $(LDFLAGS) simsim.c -o simsim
+	gcc $(CCFLAGS) -g $(LDFLAGS) simsim.c -o simsim
 
 clean:
 	rm -rf simsim simsim.dSYM

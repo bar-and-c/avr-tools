@@ -235,7 +235,7 @@ simavr: AVR 'H' not known
 ## `simsim`
 
 This is a custom built simulator, built on the library that is shipped with `simavr`.
-You will have to build it yourself – at the moment `clang` and `pkg-config` are needed for
+You will have to build it yourself – at the moment `gcc` and `pkg-config` are needed for
 this.
 
 If you are standing in this directory, just execute the command `make`.
