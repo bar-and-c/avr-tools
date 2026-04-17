@@ -1,8 +1,8 @@
 ROOT_DIR ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 ifeq ($(OS),Windows_NT)
-	ARDUINO_DEVICE ?= COM4
-	ARDUINO_PROGRAMMER = wiring
+	ARDUINO_DEVICE ?= $(shell $(ROOT_DIR)../tools/scan_arduino.sh)
+	ARDUINO_PROGRAMMER = avr109
 
 	# Trying to guess where the Atmel_DFP pack is
 	ATMEL_PACK_ROOT ?= C:/7.0
