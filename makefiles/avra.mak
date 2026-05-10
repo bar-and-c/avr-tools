@@ -32,6 +32,8 @@ else ifeq ($(MCU),atmega32)
 DEVICE_INCLUDE_NAME = m32def.inc
 else ifeq ($(MCU),atmega328p)
 DEVICE_INCLUDE_NAME = m328pdef.inc
+else ifeq ($(MCU),atmega328pb)
+DEVICE_INCLUDE_NAME = m328PBdef.inc
 else
 DEVICE_INCLUDE_NAME = unsupported_mcu.inc
 endif
@@ -60,7 +62,6 @@ $(MAIN_WITH_DEVICE_INCLUDE): $(MAIN_SRC)
 
 $(HEXFILE): $(MAIN_WITH_DEVICE_INCLUDE) $(INCLUDE_SRC)
 	@echo "Building for $(MCU) with extra flags: $(EXTRA_INCLUDE_PATH)"
-	@# .inc files for processors are automatically included
 	$(AVRA_EXEC) -fI -I . $(EXTRA_INCLUDE_PATH) -m $(BUILD_DIR)/$(PROJECT_NAME).map -l $(BUILD_DIR)/$(PROJECT_NAME).lst -o $(HEXFILE) $(MAIN_WITH_DEVICE_INCLUDE)
 
 clean:
