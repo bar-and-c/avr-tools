@@ -2,7 +2,6 @@ ROOT_DIR ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 ifeq ($(OS),Windows_NT)
 	ARDUINO_DEVICE ?= $(shell $(ROOT_DIR)../tools/scan_arduino.sh)
-	ARDUINO_PROGRAMMER = avr109
 
 	# Trying to guess where the Atmel_DFP pack is
 	ATMEL_PACK_ROOT ?= C:/7.0
@@ -28,7 +27,6 @@ else
 
 	ifeq ($(UNAME_S),Linux)
 		ARDUINO_DEVICE ?= /dev/ttyACM0
-		ARDUINO_PROGRAMMER = wiring
 
 		# All this is to be able to use avrasm2.exe in WSL on Linux.
 		# One could use avra, BUT the latest official version doesn't 
@@ -54,12 +52,23 @@ else
 
 	ifeq ($(UNAME_S),Darwin)
 		ARDUINO_DEVICE ?= $(shell $(ROOT_DIR)../tools/scan_arduino.sh)
-		ARDUINO_PROGRAMMER = avr109
 		AVRA_EXEC = $(ROOT_DIR)../avra_macos/usr/local/bin/avra
 		AVR_DEVICE_INC ?= $(ROOT_DIR)../avra_macos/usr/local/include/avr
 	endif
 
 
+endif
+
+
+# Programmer selection based on MCU
+ifeq ($(MCU), atmega32u4)
+	ARDUINO_PROGRAMMER = avr109
+else ifeq ($(MCU), atmega328p)
+	ARDUINO_PROGRAMMER = arduino
+else ifeq ($(MCU), atmega2560)
+	ARDUINO_PROGRAMMER = wiring
+else
+	ARDUINO_PROGRAMMER = avr109
 endif
 
 
