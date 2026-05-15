@@ -10,8 +10,12 @@ HEXFILE := $(BUILD_DIR)/$(PROJECT_NAME).hex
 MCU ?= atmega32u4
 F_CPU = 16000000UL
 
+# If the main makefile has defined sources explicitly, use that,
+# otherwise take all in project dir and one level deeper
+ifeq ($(SOURCE_FILES),)
+	SOURCE_FILES := $(wildcard *.c */*.c *.s */*.s)
+endif
 
-SOURCE_FILES := $(wildcard *.c */*.c *.s */*.s)
 OBJECTS = $(patsubst %.c,$(BUILD_DIR)/%.o,\
           $(patsubst %.s,$(BUILD_DIR)/%.o,\
           $(notdir $(SOURCE_FILES))))
