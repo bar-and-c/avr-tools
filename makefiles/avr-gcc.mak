@@ -18,18 +18,31 @@ endif
 
 OBJECTS = $(patsubst %.c,$(BUILD_DIR)/%.o,\
           $(patsubst %.s,$(BUILD_DIR)/%.o,\
-          $(notdir $(SOURCE_FILES))))
+          $(SOURCE_FILES)))
 
+
+# Add sources from any shared module dirs the project makefile defined
+SHARED_SOURCE_FILES = $(foreach d,$(SHARED_DIRS),$(wildcard $(d)/*.c $(d)/*.s))
+# This puts shared object files directly in $(BUILD_DIR), i.e. not in subdirs
+# (could result in names clashing, but probably not).
+SHARED_OBJECTS = $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(notdir $(SHARED_SOURCE_FILES)))))
+# VPATH lets make find the shared module files without path prefixes in rules
+VPATH += $(SHARED_DIRS)
+
+OBJECTS += $(SHARED_OBJECTS)
+
+# Add include paths for module headers
+CFLAGS += $(addprefix -I,$(dir $(SHARED_DIRS)))
 
 
 all: $(HEXFILE)
 
 include $(ROOT_DIR)os.mak
 
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -O0 -g -Wall \
+CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU) -O0 -g -Wall \
          -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-ASM_FLAGS = -mmcu=$(MCU) -g -x assembler-with-cpp 
-LDFLAGS = -mmcu=$(MCU) -lm
+ASM_FLAGS += -mmcu=$(MCU) -g -x assembler-with-cpp 
+LDFLAGS += -mmcu=$(MCU) -lm
 
 $(ELFFILE): $(OBJECTS)
 	@mkdir -p $(BUILD_DIR)

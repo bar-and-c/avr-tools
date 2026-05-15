@@ -4,16 +4,24 @@ This directory contains the base makefiles used. The basic idea is that when you
 create a new "project" (e.g. for a lab), you create a directory somewhere (see 
 the `examples` directory for inspiration), where the project code is gathered.
 
-There are some limitations, caused by a lack of `make` knowledge, for 
-instance: all source code in a project must be in the project directory or a
-subdirectory therein. No deeper directory structures are supported.
-The directory (with subdirs) is scanned for C and assembler files, which
-are compiled into binaries with the project directory name as basename.
+In the project directory's makefile, include the base makefile that matches 
+the project type – i.e. include `avra.mak` for a pure AVR assembly project,
+and `avr-gcc.mak` for a C (or avr-as/GAS assembly) project.
+
+When using such a simple makefile, all source code in a project must be in
+the project directory or a subdirectory therein. No deeper directory structures
+are supported. The directory (with subdirs) is scanned for C and/or assembly
+files, which are compiled into binaries with the project directory name as basename.
 
 There are two different kind of projects suported.
 
 1. Pure AVR assembler projects. Include `avra.mak` for pure assembler.
 2. C projects, incuding avr-gcc style assembler. Include `avr-gcc.mak` for these.
+
+Like this: 
+```
+include ../../makefiles/avr-gcc.mak
+```
 
 ## Pure AVR
 There is one major quirk in the AVR makefile. The `avra` assembler is not the sharpest,
