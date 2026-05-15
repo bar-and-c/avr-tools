@@ -10,12 +10,11 @@ HEXFILE := $(BUILD_DIR)/$(PROJECT_NAME).hex
 MCU ?= atmega32u4
 F_CPU = 16000000UL
 
-C_SOURCES = $(wildcard *.c) $(wildcard */*.c)
-ASM_SOURCES = $(wildcard *.s) $(wildcard */*.s)
 
-C_OBJECTS = $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_SOURCES))
-ASM_OBJECTS = $(patsubst %.s,$(BUILD_DIR)/%.o,$(ASM_SOURCES))
-OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
+SOURCE_FILES := $(wildcard *.c */*.c *.s */*.s)
+OBJECTS = $(patsubst %.c,$(BUILD_DIR)/%.o,\
+          $(patsubst %.s,$(BUILD_DIR)/%.o,\
+          $(notdir $(SOURCE_FILES))))
 
 
 
@@ -28,7 +27,7 @@ CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -O0 -g -Wall \
 ASM_FLAGS = -mmcu=$(MCU) -g -x assembler-with-cpp 
 LDFLAGS = -mmcu=$(MCU) -lm
 
-$(ELFFILE): $(C_OBJECTS) $(ASM_OBJECTS)
+$(ELFFILE): $(OBJECTS)
 	@mkdir -p $(BUILD_DIR)
 	$(CC) $(LDFLAGS) -o $@ $^
 
