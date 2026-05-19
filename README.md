@@ -41,11 +41,11 @@ for instance:
 ./examples/ [...]
 
 ./my_avr_code/
-             cs_lab1/
+             ce_lab1/
                  .vscode/
                  Makefile
                  main.c
-             cs_lab2/
+             ce_lab2/
 ```
 
 ## Toolchain
@@ -89,6 +89,16 @@ the tools and putting them in the PATH variable. A Windows native environment (s
 or PowerShell) does things differently, and currently doesn't work with the makefiles – a "Unix-like" 
 environment is needed. On Windows, two such alternatives I have tried are Git Bash and [WSL]
 (https://learn.microsoft.com/en-us/windows/wsl/). 
+
+Bottom line:
+- Git Bash is easier to get started with, it appears to have a better relationship with Windows
+  (easier to access existing Windows tools), _but_ the `simavr` simulator does not seem to exist
+  natively on Windows – so no debugging using simavr.
+- WSL is a bit more of a hassle to get into, but when in WSL, it's just Linux, all is good – except
+  uploading .hex files to the Arduino board, because accessing USB is not plug-and-play. 
+  It _is_, of course, possible to bring files in/out of WSL, so you could do the upload outside, 
+  but not as streamlined.
+- One option is to just use Microchip Studio – it even has a simulator.
 
 The makefile os.mak tries to guess where the AVR assembler device include files are. If it 
 fails, find where they are, and either update os.mak or define it on command line, like this: 
@@ -149,7 +159,7 @@ sudo apt-get install simavr
 ##### `simsim`
 
 I used `gcc` to build the crude AVR simulator `simsim`, and `pkg-config` to get compile and link flags.
-It also needs the followinf libs:
+It also needs the following libs:
 
 ```
 sudo apt-get install libsimavr-dev
