@@ -80,8 +80,10 @@ else
 	AVRDUDE_CONFIG_OPTION = -C "${AVRDUDE_CONFIG_PATH}"
 endif
 
+AVRDUDE_BAUD ?= 115200
+
 upload: $(HEXFILE)
 	@echo 'Will upload "$(HEXFILE)" to "$(ARDUINO_DEVICE)"...'
 	@# -D disables auto-erase
-	avrdude -v $(AVRDUDE_CONFIG_OPTION) -p $(MCU) -c $(ARDUINO_PROGRAMMER) -b 115200 -P $(ARDUINO_DEVICE) -D -U flash:w:$<
+	avrdude -v $(AVRDUDE_CONFIG_OPTION) -p $(MCU) -c $(ARDUINO_PROGRAMMER) -b $(AVRDUDE_BAUD) -P $(ARDUINO_DEVICE) -D -U flash:w:$<
 	@echo 'Program "$(HEXFILE)" uploaded to "$(ARDUINO_DEVICE)"'
