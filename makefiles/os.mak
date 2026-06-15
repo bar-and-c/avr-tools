@@ -65,6 +65,8 @@ ifeq ($(MCU), atmega32u4)
 	ARDUINO_PROGRAMMER = avr109
 else ifeq ($(MCU), atmega328p)
 	ARDUINO_PROGRAMMER = arduino
+else ifeq ($(MCU), atmega328pb)
+	ARDUINO_PROGRAMMER = urclock
 else ifeq ($(MCU), atmega2560)
 	ARDUINO_PROGRAMMER = wiring
 else
