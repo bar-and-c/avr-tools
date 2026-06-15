@@ -8,7 +8,7 @@ while [ -z "$DEV" -a $i -lt 12 ]; do
 		if [ "$OS" == "Windows_NT" ]; then
 			DEV=$(powershell -Command "[System.IO.Ports.SerialPort]::GetPortNames()" 2>/dev/null | grep -v "COM3")
 		else
-			DEV=$(find /dev/ -name "tty.usbmodem*" 2>/dev/null)
+			DEV=$(find /dev/ -name "cu.usb*" 2>/dev/null)
 		fi
 		i=$((i+1))
 done
