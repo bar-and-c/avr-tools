@@ -9,7 +9,7 @@
 
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
-MCU ?= atmega32u4
+MCU ?= atmega328pb
 AVRA_EXEC ?= avra
 
 # Name the build from the name of the directory, if not defined by including makefile

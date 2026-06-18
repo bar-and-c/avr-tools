@@ -7,7 +7,7 @@ ROOT_DIR ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR := build_output
 ELFFILE := $(BUILD_DIR)/$(PROJECT_NAME).elf
 HEXFILE := $(BUILD_DIR)/$(PROJECT_NAME).hex
-MCU ?= atmega32u4
+MCU ?= atmega328pb
 F_CPU = 16000000UL
 
 # If the main makefile has defined sources explicitly, use that,
