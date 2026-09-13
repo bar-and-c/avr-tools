@@ -10,6 +10,8 @@ HEXFILE := $(BUILD_DIR)/$(PROJECT_NAME).hex
 MCU ?= atmega328pb
 F_CPU = 16000000UL
 
+SKIP_OPTIMIZATION ?= 0
+
 # If the main makefile has defined sources explicitly, use that,
 # otherwise take all in project dir and one level deeper
 ifeq ($(SOURCE_FILES),)
@@ -34,12 +36,17 @@ OBJECTS += $(SHARED_OBJECTS)
 # Add include paths for module headers
 CFLAGS += $(addprefix -I,$(dir $(SHARED_DIRS)))
 
+ifeq ($(SKIP_OPTIMIZATION),1)
+	GCC_OPT_FLAG = -O0
+else
+	GCC_OPT_FLAG = -Os
+endif
 
 all: $(HEXFILE)
 
 include $(ROOT_DIR)os.mak
 
-CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU) -O0 -g -Wall \
+CFLAGS += -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(GCC_OPT_FLAG) -g -Wall \
          -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 ASM_FLAGS += -mmcu=$(MCU) -g -x assembler-with-cpp 
 LDFLAGS += -mmcu=$(MCU) -lm
