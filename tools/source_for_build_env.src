@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+# The purpose of this script is to provide a build environment for AVR development
+# in C and AVR assembly, specifically make, AVR assembler, and avr-gcc.
+# The script assumes the tools are already available on disk, in specific paths. 
+#
+# If you want to check if you have the tools already set up, you can execute this 
+# script, like this:
+# bash source_for_build_env.src
+# 
+# The output will tell you if anything is missing.
+# If you want to set up the build environment, you must "source" the script in a 
+# shell (e.g. Terminal on macOS or Git Bash on Windows), instead of executing it.
+# like this (note the leading '.' – that is the "source" command):
+#
+# . source_for_build_env.src
+#
+# If the script fails, you may have to edit the paths a bit further down. 
+# Or maybe the tools are not available on disk?
+
+# NOTE: This script is for Windows. If you're on macOS and have installed tools 
+# with homebrew, they should already be in your $PATH – and I think the same is
+# true for Linux.
+
+
+# Keep track of whether the script is sourced – if not, just do the tool check.
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+
+if [ $sourced -eq 1 ]; then
+	echo "Will set up a build environment for AVR in this shell"
+fi
+echo
+
+
+have() {
+ 	command -v "$1" >/dev/null 2>&1
+}
+
+
+# First of all, check if tools already are present, and keep track
+have_make=0
+have_avrgcc=0
+have_asm=0
+have_avrdude=0
+if have make; then
+	echo "Found working 'make'"
+	have_make=1
+fi
+
+if have avr-gcc; then
+	echo "Found working 'avr-gcc'"
+	have_avrgcc=1
+fi
+
+if have avrasm2; then
+	echo "Found working 'avrasm2'"
+	have_asm=1
+fi
+
+if have avra; then
+	echo "Found working 'avra'"
+	have_asm=1
+fi
+
+if have avrdude; then
+	echo "Found working 'avrdude'"
+	have_avrdude=1
+fi
+
+
+# Exit early if the script is executed
+if [ $sourced -ne 1 ]; then
+	if [ $have_make -eq 1 -a $have_avrgcc -eq 1 -a $have_asm -eq 1 -a $have_avrdude -eq 1 ]; then
+		exit 0
+	fi
+
+	echo
+	echo "You are missing tool(s), see below. Install accordingly and/or update script."
+	echo "Please note that if on Windows, you need to source (not execute) this script"
+	echo "if you want the PATH variable to be updated with the build tool paths."
+	echo
+	echo "TODO: Would be nice with a printout of where it looked – OR a verbose flag"
+	echo "have_make? $have_make"
+	echo "have_avrgcc? $have_avrgcc"
+	echo "have_asm? $have_asm"
+	echo "have_avrdude? $have_avrdude"	
+	exit 1	
+fi
+
+
+
+# Check paths
+if [ "$OS" == "Windows_NT" ]; then
+	# NOTE: For now, on Windows, the presence of Microchip Studio is assumed, for 
+	# shell utils and AVR assembler. 
+	# TODO: See if it's possible to install avra and GNU tools for usage in Git Bash.
+	GNU_MAKE_PATH=/c/7.0/shellutils
+	AVR_ASSEMBLER_PATH=/c/7.0/toolchain/avr8/avrassembler
+
+	AVR_GCC_PATH=/c/Embedded_Systems/avr-gcc-16.1_2026-05-20_mingw32/bin
+
+	AVRDUDE_PATH=/c/Embedded_Systems/avrdude-v8.3-windows-x64
+	AVRDUDE_CONFIG_PATH_CANDIDATE=${AVRDUDE_PATH}/avrdude.conf
+else
+	echo "This script is only for Git Bash on Windows, for now"
+fi
+
+
+
+if [ $have_make -eq 0 ]; then
+	if [ ! -d "$GNU_MAKE_PATH" ]; then
+		echo "Could not find the path $GNU_MAKE_PATH for tool make – install or find it"
+	else
+
+		if (PATH="$GNU_MAKE_PATH:$PATH" have make); then
+			PATH="$GNU_MAKE_PATH:$PATH"
+		else
+			echo "WARNING: Still no make, check path and/or setup script"
+		fi
+
+
+	fi
+fi
+
+if [ $have_avrgcc -eq 0 ]; then
+	if [ ! -d "$AVR_GCC_PATH" ]; then
+		echo "Could not find the path $AVR_GCC_PATH for tool avr-gcc – install or find it"
+	else
+		if (PATH="$AVR_GCC_PATH:$PATH" have avr-gcc); then
+			PATH="$AVR_GCC_PATH:$PATH"
+		else
+			echo "WARNING: Still no avr-gcc, check path and/or setup script"
+		fi
+	fi
+fi
+
+if [ $have_asm -eq 0 ]; then
+	if [ ! -d "$AVR_ASSEMBLER_PATH" ]; then
+		echo "Could not find the path $AVR_ASSEMBLER_PATH for tool avrasm2 – install or find it (or 'avra')"
+	else
+		if (PATH="$AVR_ASSEMBLER_PATH:$PATH" have avrasm2); then
+			PATH="$AVR_ASSEMBLER_PATH:$PATH"
+		elif (PATH="$AVR_ASSEMBLER_PATH:$PATH" have avra); then
+			PATH="$AVR_ASSEMBLER_PATH:$PATH"
+		else
+			echo "WARNING: Still no assembler, check path and/or setup script"
+		fi
+	fi
+fi
+
+if [ $have_avrdude -eq 0 ]; then
+	if [ ! -d "$AVRDUDE_PATH" ]; then
+		echo "Could not find the path $AVRDUDE_PATH for tool avrdude – install or find it"
+	elif [ ! -f "$AVRDUDE_CONFIG_PATH_CANDIDATE" ]; then
+		echo "Could not find the config file $AVRDUDE_CONFIG_PATH_CANDIDATE – check the paths"
+	else
+		if (PATH="$AVRDUDE_PATH:$PATH" have avrdude); then
+			PATH="$AVRDUDE_PATH:$PATH"
+		else
+			echo "WARNING: Still no avrdude, check path and/or setup script"
+		fi
+	fi
+fi
