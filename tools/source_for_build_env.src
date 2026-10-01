@@ -68,28 +68,7 @@ if have avrdude; then
 fi
 
 
-# Exit early if the script is executed
-if [ $sourced -ne 1 ]; then
-	if [ $have_make -eq 1 -a $have_avrgcc -eq 1 -a $have_asm -eq 1 -a $have_avrdude -eq 1 ]; then
-		exit 0
-	fi
-
-	echo
-	echo "You are missing tool(s), see below. Install accordingly and/or update script."
-	echo "Please note that if on Windows, you need to source (not execute) this script"
-	echo "if you want the PATH variable to be updated with the build tool paths."
-	echo
-	echo "TODO: Would be nice with a printout of where it looked – OR a verbose flag"
-	echo "have_make? $have_make"
-	echo "have_avrgcc? $have_avrgcc"
-	echo "have_asm? $have_asm"
-	echo "have_avrdude? $have_avrdude"	
-	exit 1	
-fi
-
-
-
-# Check paths
+# Set up expected paths
 if [ "$OS" == "Windows_NT" ]; then
 	# NOTE: For now, on Windows, the presence of Microchip Studio is assumed, for 
 	# shell utils and AVR assembler. 
@@ -106,7 +85,40 @@ else
 fi
 
 
+# Exit early if the script is executed
+if [ $sourced -ne 1 ]; then
+	if [ $have_make -eq 1 -a $have_avrgcc -eq 1 -a $have_asm -eq 1 -a $have_avrdude -eq 1 ]; then
+		exit 0
+	fi
 
+	echo
+	echo "You are missing tool(s), see below. Install accordingly and/or update script."
+	echo "Please note that if on Windows, you need to source (not execute) this script"
+	echo "if you want the PATH variable to be updated with the build tool paths."
+	echo
+
+	if [ $have_make -eq 0 }; then
+		echo "'make' is missing, checked in '$GNU_MAKE_PATH'"
+		echo
+	fi 
+	if [ $have_asm -eq 0 }; then
+		echo "AVR assembler is missing, checked in '$AVR_ASSEMBLER_PATH'"
+		echo
+	fi 
+	if [ $have_avrgcc -eq 0 }; then
+		echo "'avr-gcc' is missing, checked in '$AVR_GCC_PATH'"
+		echo
+	fi 
+	if [ $have_avrdude -eq 0 }; then
+		echo "'avrdude' is missing, checked in '$AVRDUDE_PATH'"
+		echo
+	fi 
+
+	exit 1	
+fi
+
+
+# Check paths
 if [ $have_make -eq 0 ]; then
 	if [ ! -d "$GNU_MAKE_PATH" ]; then
 		echo "Could not find the path $GNU_MAKE_PATH for tool make – install or find it"
@@ -117,8 +129,6 @@ if [ $have_make -eq 0 ]; then
 		else
 			echo "WARNING: Still no make, check path and/or setup script"
 		fi
-
-
 	fi
 fi
 
