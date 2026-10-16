@@ -58,7 +58,10 @@ $(BUILD_DIR):
 	mkdir $@
 
 $(MAIN_WITH_DEVICE_INCLUDE): $(BUILD_DIR) $(MAIN_SRC)
-	$(file > $@,$(CONCATENATED_MAIN))
+# NOTE: At some point, I changed to '$(file > ...)' – cannot remember why, and now
+#       I see it fails on macOS. For now, reverting to old method.
+#	$(file > $@,$(CONCATENATED_MAIN))
+	echo "$$CONCATENATED_MAIN" > $@
 
 
 $(HEXFILE): $(BUILD_DIR) $(MAIN_WITH_DEVICE_INCLUDE) $(INCLUDE_SRC)
