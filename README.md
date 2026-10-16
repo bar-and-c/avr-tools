@@ -10,10 +10,96 @@ macOS and Linux, and avrasm2 on Windows, but it is possible to use avr-gcc for a
 the assembly language avr-gcc uses differs somewhat from standard AVR assembler, see example code). 
 
 
-## Getting started
-Read [the getting started guide](getting_started.md) to get up and running quickly. The bottom
-line is that some tools are needed, and they need to be in the PATH environment variable for
-the makefiles (the build system) to work. 
+## Quick start
+
+You will need the following:
+
+- `avr-gcc` for compiling C code for AVR
+- either `avrasm2.exe` or `avra` for compiling AVR assembly code
+- `avrdude` for uploading the firmware (FW) to the board
+- `make` for building the firmware
+- possibly some Unix-style tools I have forgotten to document
+- some Unix-style terminal
+
+This quick start guide is written with Windows in mind; the same basic requirements 
+are valid on other OS:es, but things are easier. See [the getting started guide](getting_started.md) 
+to get up and running quickly. The bottom line for any OS is that some tools are needed, and 
+they need to be in the PATH environment variable for the makefiles (the build system) to work. 
+
+
+Unfortunately, on Windows you will have to install Microchip Studio, to get an AVR 
+assembler and `make`. Granted, with Microchip Studio installed, you can naturally
+use it as your build environment, if you enjoy old and clunky IDEs. 
+
+Seriously, though: there is a point in avoiding an IDE when you're learning: you get 
+closer to the tools that are being used – basically the same tools that an IDE uses,
+so knowing them better makes it easier to understand what an IDE does. 
+
+### The Microchip Studio path
+If you choose to use Microchip Studio, you can still use the source code for the labs, you
+just have to create a project etc. – I'm sure there is a tutorial for that online!
+
+### The `make` path
+
+I suggest you use Git Bash as your "Unix-style terminal". Other options are 
+MinGW/MSYS2 and WSL (WSL is Linux, though, so the tooling is different).
+
+Install the tools:
+
+| **What**                                | **How** |
+|---                                      |---      |
+| [Git for Windows](https://gitforwindows.org) | Install it |
+| [Microchip Studio](https://www.microchip.com/en-us/tools-resources/develop/microchip-studio) | Install it |
+| [avr-gcc](https://sourceforge.net/projects/winavr/files/avr-gcc/avr-gcc-16.1_2026-05-20_mingw32.tar.xz/download) | Download and unpack |
+| [avrdude](https://github.com/avrdudes/avrdude/releases/download/v8.3/avrdude-v8.3-windows-x64.zip) | Download and unpack |
+
+You can unpack the latter two where you like – the source script expects them to be in 
+`C:\Embedded_Systems`, but if you choose another location, just update the source script. 
+
+To be able to see debug prints over USB, install 
+[Tera Term](https://github.com/TeraTermProject/teraterm/releases/download/v5.7.0/teraterm-5.7.0-x64.exe) 
+or some other serial console. 
+
+You will also need some code-friendly text editor, like [Notepad++](https://notepad-plus-plus.org/downloads/v8.9.8.1/).
+
+
+### How to use it
+
+To download the code with `git` (done only once):
+```
+git clone https://codeberg.org/hakaneriksson/dvmt-lab-code.git
+cd dvmt-lab-code
+git submodule update --init --recursive
+```
+
+To set up for building (done when you start Git Bash, unless you've put the tools in your PATH):
+```
+. avr-tools/tools/source_for_build_env.sh
+```
+
+To build, you use `make` – you can add extra arguments like `clean` to remove previously built
+artifacts, and `upload` to upload it to the board.
+```
+cd courses/embedded_systems/lab0
+make
+make clean
+make upload
+```
+
+#### About `make upload`...
+
+The build environment tries to find the board automatically. It works OK on macOS,
+if there are no other similar devices connected. I suspect this automatic device 
+detection might work less smoothly on Windows. If it does, use DeviceManager to
+see which COM port your board has. When you find it, either update `makefiles/os.mak`
+or explicitly set the device on command line, like this: 
+
+```
+ARDUINO_DEVICE=COM5 make upload
+```
+
+The `upload` command also assumes you're using a board with `urboot` bootloader – which 
+is typically **not** the case with Arduino boards. 
 
 
 ## Example code
@@ -48,151 +134,36 @@ for instance:
              ce_lab2/
 ```
 
-## Toolchain
-
-### macOS
-
-#### Prerequisites
-
-1. Install Xcode from App Store.
-2. Install xcode command line tools by running this in the terminal: <br>
-`xcode-select --install`
-3. Homebrew is needed to install the tools -- if you don't have Homebrew, you can install it by 
-downloading an installer from https://github.com/Homebrew/brew/releases/latest; at the time of 
-writing it is called Homebrew-5.0.3.pkg. After download, double-click and do the installation.
-
-#### Installing the tools
-
-1. Install avr-gcc by running these commands in the terminal <br>
-`brew tap osx-cross/avr` <br>
-`brew install avr-gcc`
-2. To install the debugger, run this command: <br>
-`brew install avr-gdb`
-3. To install the simulator, run this command: <br>
-`brew install simavr`
-4. If you want to flash to an Arduino board, install avrdude like this: <br>
-`brew install avrdude`
-
-**NOTE:** The official version of `simavr` is pretty old; I have been using the latest one, installed 
-like this: `brew install --HEAD simavr`.
-
-**NOTE:** For macOS (and Linux?), `avra` is used to compile AVR assembler. On macOS, the latest 
-official version does not support ATmega32U4, so this repo contains a custom built universal binary.
-One big difference between `avra` and the AVR assembler used in Microchip Studio is that `avra` doesn't
-accept C/C++ style comments, use `;` instead (that works in both environments).
-
-
-### Windows
-
-On Windows, life is slightly more complicated, but the same problem needs to be solved – getting
-the tools and putting them in the PATH variable. A Windows native environment (such as cmd.exe 
-or PowerShell) does things differently, and currently doesn't work with the makefiles – a "Unix-like" 
-environment is needed. On Windows, two such alternatives I have tried are Git Bash and [WSL]
-(https://learn.microsoft.com/en-us/windows/wsl/). 
-
-Bottom line:
-- Git Bash is easier to get started with, it appears to have a better relationship with Windows
-  (easier to access existing Windows tools), _but_ the `simavr` simulator does not seem to exist
-  natively on Windows – so no debugging using simavr.
-- WSL is a bit more of a hassle to get into, but when in WSL, it's just Linux, all is good – except
-  uploading .hex files to the Arduino board, because accessing USB is not plug-and-play. 
-  It _is_, of course, possible to bring files in/out of WSL, so you could do the upload outside, 
-  but not as streamlined.
-- One option is to just use Microchip Studio – it even has a simulator.
-
-The makefile os.mak tries to guess where the AVR assembler device include files are. If it 
-fails, find where they are, and either update os.mak or define it on command line, like this: 
-```
-AVR_DEVICE_INC=/c/7.0/packs/atmel/ATmega_DFP/1.7.374/avrasm/inc make
-```
-
-#### Git Bash
-Git Bash seems to be easier to "cross over" to native Windows, so then you can use 
-Microchip Studio's AVR assembler and C compiler, as well as its `shellutils` directory
-for tools like `make` etc., and Arduino's installation of `avrdude`. 
-
-If Microchip Studio is installed, and there is a setup script (in `tools/`) that can 
-be _sourced_ to set those paths in Git Bash:
-```
-. tools/build_setup.sh
-```
-Note the leading period, followed by a whitespace – that means that the script is executed 
-in the terminal's process, and the PATH updates are available. 
-
-If these paths are not correct on your computer, either update the setup script to your 
-paths, or update your environment PATH variable to include them.
-
-- The `shellutils` path is needed for `make`. 
-- The `avrassembler` path is needed for the AVR assembler (`avrasm2`). 
-- The `avr8-gnu-toolchain` path is needed for the `avr-gcc` tools. 
-
-
-#### WSL
-
-WSL is Linux, more or less, so it is easy to install the needed packages. 
-
-My initial attempts were in Git Bash, using Microchip tools. That works very well 
-for building and uploading, but the simulation tool that is needed for debugging 
-(`simavr`) is not readily available on Windows. In WSL much or all of this can be
-installed using `apt`, but uploading is probably hard to do from WSL, since you
-need access to the COM port. 
-
-I installed most tools using `apt`. The `avra` assembler is available for Linux as
-well, but (like on macOS) its latest release does not does not support the ATmega32U4
-MCU used in Arduino Leonardo. Instead, I have used the assembler in the Microchip
-Studio toolchain, with some pretty ugly workarounds in `os.mak`.
-
-Installing tools in WSL:
-```
-sudo apt-get update 
-
-# For make and other build tools
-sudo apt install build-essential
-
-# For avr-gcc
-sudo apt-get install gcc-avr
-
-# For simavr, used for debugging
-sudo apt-get install simavr
-```
-
-##### `simsim`
-
-I used `gcc` to build the crude AVR simulator `simsim`, and `pkg-config` to get compile and link flags.
-It also needs the following libs:
-
-```
-sudo apt-get install libsimavr-dev
-sudo apt-get install libelf-dev
-```
-
 
 ## Building the AVR code
 The simplest way to build is to go to the main code directory (using `cd` in the terminal) and then enter 
 `make` in the terminal, like this:
+
 ```
 cd examples/blinky_c
 make
 ```
-This will build an ELF file (to be used for debugging) and a HEX file (which can be transferred to an Arduino 
+This will build an ELF file (to be used for debugging) and a HEX file (which can be transferred to an AVR 
 board or used in SimulIDE).
 
-By default, this makefile builds for ATmega32U4 (as in Arduino Leonardo); if you want to build for another 
+By default, this makefile builds for ATmega328PB; if you want to build for another 
 MCU, do like this:
+
 ```
 MCU=atmega328p make
 ```
 
 **NOTE:** At the time of writing, for AVR assembler projects, the only supported MCUs are ATmega32, 
-ATmega32U4, and ATmega328P. If the CPU of your choice causes the AVR assembler build to fail, add
-it in `makefiles/avra.mak`, like this:
+ATmega32U4, ATmega328P, and ATmega328PB. If the CPU of your choice causes the AVR assembler build 
+to fail, add it in `makefiles/avra.mak`, like this:
+
 ```
 else ifeq ($(MCU),atmega328p)
 DEVICE_INCLUDE_NAME = m328pdef.inc
 ```
 
-### Build and upload to Arduino
-If you want to upload the built firmware to the Arduino, use the make target `upload`. There is an automatic 
+### Build and upload to an AVR board
+If you want to upload the built firmware to the board, use the make target `upload`. There is an automatic 
 scan for the board, but **note:** this is currently only for macOS, and only with one (1) board connected. 
 If the automatic scan fails, you can add the port by setting the variable `ARDUINO_DEVICE`on the command 
 line, like this:
@@ -201,7 +172,7 @@ ARDUINO_DEVICE=/dev/ttyACM0 make upload
 ```
 
 ### Build and debug
-To debug on the Arduino Leonardo boards, you will need other tools, but if building with avr-gcc you can
+To debug on the actual board, you will need other tools, but if building with avr-gcc you can
 debug on the host computer. You will need to install simavr to use as a simulated AVR MCU, and
 `avr-gdb` for debugging (using homebrew on macOS). The makefiles have a target for debugging:
 ```
@@ -209,6 +180,7 @@ make debug
 ```
 This starts a simulated AVR environment, and drops you into `main` in gdb. Learn about gdb commands online, 
 here is a brief intro:
+
 - 'l': list the source code around the current line
 - 'n': step over next line
 - 's': step _into_ next line (i.e. into a function call)
@@ -312,6 +284,7 @@ note that not all ports are the same as on ATmega32U4. What you can do for those
 name for the port/pin, that you use in the code, and define them differently depending on MCU.
 
 In pure AVR assembly language:
+
 ```
 #ifdef _M32DEF_INC_
 	.equ LED_OUTPUT_PORT = PORTC
@@ -331,6 +304,7 @@ In pure AVR assembly language:
 ```
 
 When building with avr-gcc, another macro must be used: 
+
 ```
 #ifdef __AVR_ATmega32__
 #define LED_OUTPUT_PORT PORTC
@@ -344,6 +318,7 @@ When building with avr-gcc, another macro must be used:
 ```
 
 To build for the ATmega32 MCU, do this:
+
 ```
 MCU=atmega32 make clean all
 ```
@@ -357,12 +332,12 @@ Git Bash) on Windows.
 - There are some things done in the makefiles that assume a Unix type of environment (simply because
   I lack the necessary `make` and Windows skills). It should be possible to fix, but I will not do it 
   anytime soon. I have tried a lot of it in WSL, and it works OK. If you only want to build (not debug),
-  Git Bash is even simpler (assuming Microchip Studio and Arduino are installed).
+  Git Bash is even simpler (assuming Microchip Studio and other tools are installed).
 - On macOS, there is a script that tries to detect the Leonardo in bootloader mode – maybe this is too 
   optimistic (and error prone) – and on Windows there is a much less tested variant, but if that fails,
   or if on Linux, the device has to be passed on command line, `ARDUINO_DEVICE=/dev/ttyACM0 make` (or
   whatever the device is, something like `COM7` on Windows). Or edit `os.mak`.
 - The device detection script mentioned above only works if there is one (1) device that matches the
   crude check. This can be improved, but is not (yet).
-- The device detection script mentioned above also (possibly) only works on Leonardo – other MCUs than
-  ATmega32U4 may need another programmer ("wiring"?).
+- The upload command assumes the `urboot` bootloader is used – other ones may need another 
+  programmer ("wiring"?).
