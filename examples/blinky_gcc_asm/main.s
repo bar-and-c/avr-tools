@@ -1,4 +1,4 @@
-; LED blink for Arduino Leonardo
+; LED blink in AVR assembly (for MAUno with LED on PD2)
 
 #include <avr/io.h>
 
@@ -14,15 +14,15 @@ main:
 	LDI R16, hi8(RAMEND)
 	OUT _SFR_IO_ADDR(SPH), R16
 
-	LDI R24, 0x80
-	OUT _SFR_IO_ADDR(DDRC), R24
+	LDI R24, 0x04
+	OUT _SFR_IO_ADDR(DDRD), R24
 
 loop:
-	LDI R24, 0x80
-	OUT _SFR_IO_ADDR(PORTC), R24
+	LDI R24, 0x04
+	OUT _SFR_IO_ADDR(PORTD), R24
 	RCALL delay
 	LDI R24, 0x00
-	OUT _SFR_IO_ADDR(PORTC), R24
+	OUT _SFR_IO_ADDR(PORTD), R24
 	RCALL delay
 	RJMP loop
 

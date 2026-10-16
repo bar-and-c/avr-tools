@@ -1,4 +1,4 @@
-; LED blink for Arduino Leonardo
+; LED blink for MAUno
 
 .ORG 0x0000
 RJMP main        ; Reset vector
@@ -10,12 +10,14 @@ main:
 	OUT SPL, R16
 	LDI R16, HIGH(RAMEND)
 	OUT SPH, R16
-	SBI DDRC, 7
+
+	; Set "user LED" pin as output (PD2 on MAUno)
+	SBI DDRD, 2
 
 loop:
-	SBI PORTC, 7
+	SBI PORTD, 2
 	RCALL delay
-	CBI PORTC, 7
+	CBI PORTD, 2
 	RCALL delay
 	RJMP loop
 
