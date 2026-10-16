@@ -1,7 +1,8 @@
 # Getting started with `avr-tools`
 
 The most basic usage of these tools is to simplify building and uploading code to 
-AVR based development boards, primarily Arduino Leonardo.
+AVR based development boards, primarily a custom board (MAUno), but it has also
+been used with Arduino Leonardo and Uno.
 
 It also contains simulation tools, to enable debugging and (to a very limited extent)
 live simulation, but that is next level. This covers getting started with the basics.

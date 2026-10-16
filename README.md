@@ -339,10 +339,10 @@ Git Bash) on Windows.
   I lack the necessary `make` and Windows skills). It should be possible to fix, but I will not do it 
   anytime soon. I have tried a lot of it in WSL, and it works OK. If you only want to build (not debug),
   Git Bash is even simpler (assuming Microchip Studio and other tools are installed).
-- On macOS, there is a script that tries to detect the Leonardo in bootloader mode – maybe this is too 
-  optimistic (and error prone) – and on Windows there is a much less tested variant, but if that fails,
-  or if on Linux, the device has to be passed on command line, `ARDUINO_DEVICE=/dev/ttyACM0 make` (or
-  whatever the device is, something like `COM7` on Windows). Or edit `os.mak`.
+- On macOS, there is a script that tries to detect the board, and on Windows there is a much less 
+  tested variant, but if that fails, or if on Linux, the device has to be passed on command line, 
+  `ARDUINO_DEVICE=/dev/ttyACM0 make` (or whatever the device is, something like `COM7` on Windows). 
+  Or edit `os.mak`.
 - The device detection script mentioned above only works if there is one (1) device that matches the
   crude check. This can be improved, but is not (yet).
 - The upload command assumes the `urboot` bootloader is used – other ones may need another 

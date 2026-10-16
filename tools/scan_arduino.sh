@@ -3,7 +3,7 @@
 DEV=""
 i=0
 while [ -z "$DEV" -a $i -lt 12 ]; do
-		echo "Press reset on Leonardo" > /dev/stderr
+		echo "If Arduino Leonardo, press reset, otherwise wait" > /dev/stderr
 		sleep 1
 		if [ "$OS" == "Windows_NT" ]; then
 			DEV=$(powershell -Command "[System.IO.Ports.SerialPort]::GetPortNames()" 2>/dev/null | grep -v "COM3")
