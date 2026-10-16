@@ -65,24 +65,30 @@ You will also need some code-friendly text editor, like [Notepad++](https://note
 
 ### How to use it
 
-To download the code with `git` (done only once):
+To download the repository with `git`:
+
 ```
-git clone https://codeberg.org/hakaneriksson/dvmt-lab-code.git
-cd dvmt-lab-code
-git submodule update --init --recursive
+git clone https://codeberg.org/bar-and-c/avr-tools.git
+cd avr-tools
 ```
 
 To set up for building (done when you start Git Bash, unless you've put the tools in your PATH):
+
 ```
-. avr-tools/tools/source_for_build_env.sh
+. tools/source_for_build_env.sh
 ```
 
 To build, you use `make` – you can add extra arguments like `clean` to remove previously built
 artifacts, and `upload` to upload it to the board.
+
 ```
-cd courses/embedded_systems/lab0
+cd examples/blinky_c/
 make
-make clean
+```
+
+To upload it to the board:
+
+```
 make upload
 ```
 
