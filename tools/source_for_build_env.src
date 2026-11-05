@@ -42,6 +42,7 @@ have_make=0
 have_avrgcc=0
 have_asm=0
 have_avrdude=0
+have_gcc=0
 if have make; then
 	echo "Found working 'make'"
 	have_make=1
@@ -66,6 +67,11 @@ if have avrdude; then
 	echo "Found working 'avrdude'"
 	have_avrdude=1
 fi
+if have gcc; then
+	echo "Found working 'gcc'"
+	have_gcc=1
+fi
+
 
 
 # Set up expected paths
@@ -77,6 +83,7 @@ if [ "$OS" == "Windows_NT" ]; then
 	AVR_ASSEMBLER_PATH=/c/7.0/toolchain/avr8/avrassembler
 
 	AVR_GCC_PATH=/c/Embedded_Systems/avr-gcc-16.1_2026-05-20_mingw32/bin
+	GCC_PATH=/c/Embedded_Systems/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3/mingw64/bin
 
 	AVRDUDE_PATH=/c/Embedded_Systems/avrdude-v8.3-windows-x64
 	AVRDUDE_CONFIG_PATH_CANDIDATE=${AVRDUDE_PATH}/avrdude.conf
@@ -87,7 +94,7 @@ fi
 
 # Exit early if the script is executed
 if [ $sourced -ne 1 ]; then
-	if [ $have_make -eq 1 -a $have_avrgcc -eq 1 -a $have_asm -eq 1 -a $have_avrdude -eq 1 ]; then
+	if [ $have_gcc -eq 1 -a $have_make -eq 1 -a $have_avrgcc -eq 1 -a $have_asm -eq 1 -a $have_avrdude -eq 1 ]; then
 		exit 0
 	fi
 
@@ -111,6 +118,10 @@ if [ $sourced -ne 1 ]; then
 	fi 
 	if [ $have_avrdude -eq 0 ]; then
 		echo "'avrdude' is missing, checked in '$AVRDUDE_PATH'"
+		echo
+	fi 
+	if [ $have_gcc -eq 0 ]; then
+		echo "'gcc' is missing, checked in '$GCC_PATH'"
 		echo
 	fi 
 
@@ -143,6 +154,18 @@ if [ $have_avrgcc -eq 0 ]; then
 		fi
 	fi
 fi
+if [ $have_gcc -eq 0 ]; then
+	if [ ! -d "$GCC_PATH" ]; then
+		echo "Could not find the path $GCC_PATH for tool gcc – install or find it"
+	else
+		if (PATH="$GCC_PATH:$PATH" have gcc); then
+			PATH="$GCC_PATH:$PATH"
+		else
+			echo "WARNING: Still no gcc, check path and/or setup script"
+		fi
+	fi
+fi
+
 
 if [ $have_asm -eq 0 ]; then
 	if [ ! -d "$AVR_ASSEMBLER_PATH" ]; then
