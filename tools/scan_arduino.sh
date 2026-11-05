@@ -6,7 +6,7 @@ while [ -z "$DEV" -a $i -lt 12 ]; do
 		echo "If Arduino Leonardo, press reset, otherwise wait" > /dev/stderr
 		sleep 1
 		if [ "$OS" == "Windows_NT" ]; then
-			DEV=$(powershell -Command "[System.IO.Ports.SerialPort]::GetPortNames()" 2>/dev/null | grep -v "COM3")
+			DEV=$(powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(dirname "$0")/find-ch340.ps1" | tr -d '\r')
 		else
 			DEV=$(find /dev/ -name "cu.usb*" 2>/dev/null)
 		fi
