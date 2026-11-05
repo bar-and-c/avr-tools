@@ -97,19 +97,19 @@ if [ $sourced -ne 1 ]; then
 	echo "if you want the PATH variable to be updated with the build tool paths."
 	echo
 
-	if [ $have_make -eq 0 }; then
+	if [ $have_make -eq 0 ]; then
 		echo "'make' is missing, checked in '$GNU_MAKE_PATH'"
 		echo
 	fi 
-	if [ $have_asm -eq 0 }; then
+	if [ $have_asm -eq 0 ]; then
 		echo "AVR assembler is missing, checked in '$AVR_ASSEMBLER_PATH'"
 		echo
 	fi 
-	if [ $have_avrgcc -eq 0 }; then
+	if [ $have_avrgcc -eq 0 ]; then
 		echo "'avr-gcc' is missing, checked in '$AVR_GCC_PATH'"
 		echo
 	fi 
-	if [ $have_avrdude -eq 0 }; then
+	if [ $have_avrdude -eq 0 ]; then
 		echo "'avrdude' is missing, checked in '$AVRDUDE_PATH'"
 		echo
 	fi 
