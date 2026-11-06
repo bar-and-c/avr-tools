@@ -58,11 +58,9 @@ $(ELFFILE): $(OBJECTS)
 $(HEXFILE): $(ELFFILE)
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-# Also generate an assembly language output, for educational purposes
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
-	$(CC) $(CFLAGS) -S -c $< -o $@.assembly
 
 $(BUILD_DIR)/%.o: %.s
 	@mkdir -p $(dir $@)
