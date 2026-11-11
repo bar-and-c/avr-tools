@@ -1,9 +1,12 @@
+MAKEFILES_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 # Name the build from the name of the directory, if not defined by including makefile
-CODE_DIR = $(lastword $(subst /, ,$(dir $(realpath $(firstword $(MAKEFILE_LIST))))))
-PROJECT_NAME ?= $(CODE_DIR)
+ifndef PROJECT_NAME
+PROJECT_NAME := $(shell basename "$(CURDIR)")
+endif
 
-ROOT_DIR ?= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+ROOT_DIR := $(MAKEFILES_DIR)
 BUILD_DIR := build_output
 ELFFILE := $(BUILD_DIR)/$(PROJECT_NAME).elf
 HEXFILE := $(BUILD_DIR)/$(PROJECT_NAME).hex

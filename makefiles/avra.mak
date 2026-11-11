@@ -7,14 +7,18 @@
 # Clean up compiled files
 # make clean
 
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+MAKEFILES_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+ROOT_DIR := $(MAKEFILES_DIR)
+
+# Name the build from the name of the directory, if not defined by including makefile
+ifndef PROJECT_NAME
+PROJECT_NAME := $(shell basename "$(CURDIR)")
+endif
+
 
 MCU ?= atmega328pb
 AVRA_EXEC ?= avra
 
-# Name the build from the name of the directory, if not defined by including makefile
-CODE_DIR = $(lastword $(subst /, ,$(dir $(realpath $(firstword $(MAKEFILE_LIST))))))
-PROJECT_NAME ?= $(CODE_DIR)
 
 MAIN_SRC ?= $(wildcard *.asm) # This only works with one (1) .asm file
 INCLUDE_SRC := $(wildcard *.inc) $(wildcard */*.inc)
@@ -66,7 +70,7 @@ $(MAIN_WITH_DEVICE_INCLUDE): $(BUILD_DIR) $(MAIN_SRC)
 
 $(HEXFILE): $(BUILD_DIR) $(MAIN_WITH_DEVICE_INCLUDE) $(INCLUDE_SRC)
 	@echo "Building for $(MCU) with extra flags: $(EXTRA_INCLUDE_PATH)"
-	$(AVRA_EXEC) -fI -I . $(EXTRA_INCLUDE_PATH) -m $(BUILD_DIR)/$(PROJECT_NAME).map -l $(BUILD_DIR)/$(PROJECT_NAME).lst -o $(HEXFILE) $(MAIN_WITH_DEVICE_INCLUDE)
+	"$(AVRA_EXEC)" -fI -I . $(EXTRA_INCLUDE_PATH) -m $(BUILD_DIR)/$(PROJECT_NAME).map -l $(BUILD_DIR)/$(PROJECT_NAME).lst -o $(HEXFILE) $(MAIN_WITH_DEVICE_INCLUDE)
 
 clean:
 	rm -rf $(BUILD_DIR)
