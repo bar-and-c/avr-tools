@@ -79,7 +79,7 @@ debug: $(ELFFILE)
 
 # The ".mmcu" stuff is for simavr macros in the code (requires avr_mcu_section.h)
 simavr: LDFLAGS += -Wl,--undefined=_mmcu,--section-start=.mmcu=0x910000
-simavr: CFLAGS += -D_SIMAVR_BUILD_ $(shell pkg-config -cflags simavr)
+simavr: CFLAGS += -D_SIMAVR_BUILD_ $(shell pkg-config --cflags simavr)
 simavr: $(ELFFILE)
 	@echo "simavr build"
 
