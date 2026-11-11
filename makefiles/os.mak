@@ -51,7 +51,7 @@ else
 
 	ifeq ($(UNAME_S),Darwin)
 		ARDUINO_DEVICE ?= $(shell $(ROOT_DIR)../tools/scan_arduino.sh)
-		AVRA_EXEC = $(ROOT_DIR)../avra_macos/usr/local/bin/avra
+		AVRA_EXEC ?= $(ROOT_DIR)../avra_macos/usr/local/bin/avra
 		AVR_DEVICE_INC ?= $(ROOT_DIR)../avra_macos/usr/local/include/avr
 	endif
 
