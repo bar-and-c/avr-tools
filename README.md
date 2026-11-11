@@ -27,13 +27,19 @@ to get up and running quickly. The bottom line for any OS is that some tools are
 they need to be in the PATH environment variable for the makefiles (the build system) to work. 
 
 
-Unfortunately, on Windows you will have to install Microchip Studio, to get an AVR 
-assembler and `make`. Granted, with Microchip Studio installed, you can naturally
-use it as your build environment, if you enjoy old and clunky IDEs. 
+It might be possible to find or build avra for Windows (MinGWMSYS2), and I am fairly 
+sure it is possible to find something similar for `make` etc., but until then,  
+on Windows it's easiest to use Microchip Studio to get both an AVR assembler and 
+`make`. Either by installing it (install AVR tools!) or by copying the `C:\7.0` 
+directory from an existing installation. 
 
-Seriously, though: there is a point in avoiding an IDE when you're learning: you get 
-closer to the tools that are being used – basically the same tools that an IDE uses,
-so knowing them better makes it easier to understand what an IDE does. 
+**NOTE:** It appears Microchip Studio typically doesn't install the toolchain in 
+`C:\7.0` at all, so try to locate it (maybe in `C:\Program Files (x86)\Atmel\Studio\7.0`?), 
+and update the setup script (`tools/source_for_build_env.src`) with that path.
+
+**NOTE:** Another potential problem there: the `os.mak` makefile makes guesses about 
+where the Atmel DFP pack is. Currently, this is hard coded to `C:\7.0`, so if
+there are such problems, update `ATMEL_PACK_ROOT` with your path.
 
 ### The Microchip Studio path
 If you choose to use Microchip Studio, you can still use the source code for the labs, you
@@ -75,7 +81,7 @@ cd avr-tools
 To set up for building (done when you start Git Bash, unless you've put the tools in your PATH):
 
 ```
-. tools/source_for_build_env.sh
+. tools/source_for_build_env.src
 ```
 
 To build, you use `make` – you can add extra arguments like `clean` to remove previously built
@@ -170,12 +176,25 @@ DEVICE_INCLUDE_NAME = m328pdef.inc
 
 ### Build and upload to an AVR board
 If you want to upload the built firmware to the board, use the make target `upload`. There is an automatic 
-scan for the board, but **note:** this is currently only for macOS, and only with one (1) board connected. 
+scan for the board, but **note:** this is currently only for macOS/Windows, and only with one (1) 
+board connected. 
 If the automatic scan fails, you can add the port by setting the variable `ARDUINO_DEVICE`on the command 
 line, like this:
 ```
 ARDUINO_DEVICE=/dev/ttyACM0 make upload
 ```
+
+#### If the AVR board isn't recognized on Windows
+
+I have seen examples when a new board is connected to Windows that it can take a long long 
+while for Windows to install the driver. It that happens, try poking Windows for an update,
+or install the driver. Wait a few minutes first. 
+
+The driver type depends on the USB chip. For CH340, use this: 
+https://www.wch-ic.com/downloads/CH341SER_EXE.html
+
+It's from the chip manufacturer. 
+
 
 ### Build and debug
 To debug on the actual board, you will need other tools, but if building with avr-gcc you can
