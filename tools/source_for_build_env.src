@@ -81,6 +81,8 @@ if [ "$OS" == "Windows_NT" ]; then
 	# TODO: See if it's possible to install avra and GNU tools for usage in Git Bash.
 	GNU_MAKE_PATH=/c/7.0/shellutils
 	AVR_ASSEMBLER_PATH=/c/7.0/toolchain/avr8/avrassembler
+	GNU_MAKE_PATH_FALLBACK=/c/Embedded_Systems/7.0/shellutils
+	AVR_ASSEMBLER_PATH_FALLBACK=/c/Embedded_Systems/7.0/toolchain/avr8/avrassembler
 
 	AVR_GCC_PATH=/c/Embedded_Systems/avr-gcc-16.1_2026-05-20_mingw32/bin
 	GCC_PATH=/c/Embedded_Systems/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64ucrt-12.0.0-r3/mingw64/bin
@@ -109,7 +111,7 @@ if [ $sourced -ne 1 ]; then
 		echo
 	fi 
 	if [ $have_asm -eq 0 ]; then
-		echo "AVR assembler is missing, checked in '$AVR_ASSEMBLER_PATH'"
+		echo "AVR assembler is missing, checked in '$AVR_ASSEMBLER_PATH' and '$AVR_ASSEMBLER_PATH_FALLBACK'"
 		echo
 	fi 
 	if [ $have_avrgcc -eq 0 ]; then
@@ -168,13 +170,15 @@ fi
 
 
 if [ $have_asm -eq 0 ]; then
-	if [ ! -d "$AVR_ASSEMBLER_PATH" ]; then
-		echo "Could not find the path $AVR_ASSEMBLER_PATH for tool avrasm2 – install or find it (or 'avra')"
+	if [ ! -d "$AVR_ASSEMBLER_PATH" -a ! -d "$AVR_ASSEMBLER_PATH_FALLBACK" ]; then
+		echo "Could not find the path '$AVR_ASSEMBLER_PATH' or '$AVR_ASSEMBLER_PATH_FALLBACK' for tool avrasm2 – install or find it (or 'avra')"
 	else
 		if (PATH="$AVR_ASSEMBLER_PATH:$PATH" have avrasm2); then
 			PATH="$AVR_ASSEMBLER_PATH:$PATH"
 		elif (PATH="$AVR_ASSEMBLER_PATH:$PATH" have avra); then
 			PATH="$AVR_ASSEMBLER_PATH:$PATH"
+		elif (PATH="$AVR_ASSEMBLER_PATH_FALLBACK:$PATH" have avrasm2); then
+			PATH="$AVR_ASSEMBLER_PATH_FALLBACK:$PATH"
 		else
 			echo "WARNING: Still no assembler, check path and/or setup script"
 		fi
