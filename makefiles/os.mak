@@ -7,6 +7,10 @@ ifeq ($(OS),Windows_NT)
 	DFP_BASE := $(ATMEL_PACK_ROOT)/packs/atmel/ATmega_DFP
 	DFP_VERSIONS := $(wildcard $(DFP_BASE)/*)
 	DFP_DIR := $(lastword $(sort $(DFP_VERSIONS)))
+	ifeq ($(DFP_DIR),)
+		DFP_DIR := C:/Embedded_Systems/Atmel.ATmega_DFP.2.4.522
+	endif
+
 	ifneq ($(DFP_DIR),)
 		AVR_DEVICE_INC ?= $(DFP_DIR)/avrasm/inc
 	else
